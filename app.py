@@ -176,7 +176,7 @@ def disp_dataframe(df, *args, **kwargs):
 # ==========================================
 DATA_PATH = "./data/최종병합_수수료명세서_압축판.xlsx"
 
-@st.cache_data
+@st.cache_data(ttl=0)
 def load_data():
     try:
         df_life   = pd.read_excel(DATA_PATH, sheet_name='생명보험사_202602')
