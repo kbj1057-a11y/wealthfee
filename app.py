@@ -187,6 +187,11 @@ def load_data():
 
     df_life['보험군']   = '생명보험'
     df_damage['보험군'] = '손해보험'
+
+    # 실제 컬럼명 → 코드 통일 변수명 bridge rename
+    df_life   = df_life.rename(columns={'환산성적': '업적지표1', '보험료': '업적지표2'})
+    df_damage = df_damage.rename(columns={'수정보험료': '업적지표3', '보험료': '업적지표2'})
+
     df_all = pd.concat([df_life, df_damage], ignore_index=True)
 
     # 날짜 정제
@@ -196,7 +201,7 @@ def load_data():
         df_all['계약일자_정제'] = ''
 
     # 수치형 컬럼 처리
-    numeric_cols = ['지사수수료', '업적지표1', '업적지표2', '업적지표3']
+    numeric_cols = ['지사수수료', '업적지표1', '업적지표2', '업적지표3', 'FC수수료', '보험료', '환산성적']
     for c in numeric_cols:
         if c in df_all.columns:
             df_all[c] = pd.to_numeric(df_all[c], errors='coerce').fillna(0)
