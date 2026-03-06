@@ -194,9 +194,12 @@ def load_data():
 
     df_all = pd.concat([df_life, df_damage], ignore_index=True)
 
-    # 날짜 정제
+    # 날짜 정제 (계약일자가 20260107 같은 정수형(int)으로 저장됨)
     if '계약일자' in df_all.columns:
-        df_all['계약일자_정제'] = pd.to_datetime(df_all['계약일자'], errors='coerce').dt.strftime('%Y-%m-%d')
+        df_all['계약일자_정제'] = pd.to_datetime(
+            df_all['계약일자'].astype(str).str.zfill(8),
+            format='%Y%m%d', errors='coerce'
+        ).dt.strftime('%Y-%m-%d').fillna('')
     else:
         df_all['계약일자_정제'] = ''
 
@@ -330,8 +333,8 @@ d_etc_prod = d_etc_prod[d_etc_prod['지사수수료'] > 0]
 # ==========================================
 # 8-1. 업적 대시보드 클릭 감지 추가 (섹션 8보다 먼저 재계산)
 # ==========================================
-is_jan_new      = life_df['계약일자_정제'].str.startswith('202601', na=False)
-is_dmg_date     = damage_df['계약일자_정제'].str.startswith('202601', na=False)
+is_jan_new      = life_df['계약일자_정제'].str.startswith('2026-01', na=False)
+is_dmg_date     = damage_df['계약일자_정제'].str.startswith('2026-01', na=False)
 is_jan_new_dmg  = is_dmg_date & is_dmg_new
 is_jan_gen_dmg  = is_dmg_date & (damage_df['지급구분'] == '일반')
 is_jan_car_dmg  = is_dmg_date & (damage_df['지급구분'] == '자동차')
