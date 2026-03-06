@@ -27,10 +27,11 @@ CUSTOM_CSS = """
         background-color: var(--bg-main) !important;
         color: var(--color-text) !important;
     }
-    [data-testid="stSidebar"] {
-        background-color: var(--bg-main) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    /* 사이드바 완전 숨기기 */
+    [data-testid="stSidebar"], [data-testid="collapsedControl"] {
+        display: none !important;
     }
+    .block-container { padding-left: 2rem !important; padding-right: 2rem !important; }
     p, label, .stMarkdown > div, .stText {
         color: var(--color-text);
         text-shadow: none !important;
@@ -216,22 +217,8 @@ def load_data():
 df = load_data()
 
 
-# ==========================================
-# 5. 사이드바 필터
-# ==========================================
-st.sidebar.markdown("<h2 style='color:#D4AF37 !important; font-weight: 800;'>⚙️ 제어판</h2>", unsafe_allow_html=True)
-
-selected_company = st.sidebar.multiselect("📌 원수사 선택", options=sorted(df['제휴사명'].unique()), default=[])
-filtered_df = df[df['제휴사명'].isin(selected_company)] if selected_company else df.copy()
-
-product_types = sorted(filtered_df['상품군'].unique())
-selected_product_type = st.sidebar.multiselect("📦 상품군 선택", options=product_types, default=[])
-if selected_product_type:
-    filtered_df = filtered_df[filtered_df['상품군'].isin(selected_product_type)]
-
-if st.sidebar.button("🚪 로그아웃"):
-    st.session_state.authenticated = False
-    st.rerun()
+# 사이드바 없이 전체 데이터 사용
+filtered_df = df.copy()
 
 
 # ==========================================
@@ -344,22 +331,27 @@ is_jan_new_dmg  = is_dmg_date & is_dmg_new
 is_jan_gen_dmg  = is_dmg_date & (damage_df['지급구분'] == '일반')
 is_jan_car_dmg  = is_dmg_date & (damage_df['지급구분'] == '자동차')
 
-val_life_hwansan      = life_df[is_jan_new]['업적지표1'].sum()
-val_life_premium      = life_df[is_jan_new]['업적지표2'].sum()
-val_damage_premium    = damage_df[is_jan_new_dmg]['업적지표3'].sum()
-val_damage_gen_premium= damage_df[is_jan_gen_dmg]['업적지표3'].sum()
-val_damage_car_premium= damage_df[is_jan_car_dmg]['업적지표3'].sum()
+# 컬럼 없을 때를 대비한 안전한 접근 헬퍼
+def safe_sum(df, col):
+    return df[col].sum() if col in df.columns else 0
 
-l_h_rank = life_df[is_jan_new].groupby('제휴사명')['업적지표1'].sum().reset_index().sort_values('업적지표1', ascending=False)
-l_h_rank = l_h_rank[l_h_rank['업적지표1'] > 0]
-l_p_rank = life_df[is_jan_new].groupby('제휴사명')['업적지표2'].sum().reset_index().sort_values('업적지표2', ascending=False)
-l_p_rank = l_p_rank[l_p_rank['업적지표2'] > 0]
-d_p_rank = damage_df[is_jan_new_dmg].groupby('제휴사명')['업적지표3'].sum().reset_index().sort_values('업적지표3', ascending=False)
-d_p_rank = d_p_rank[d_p_rank['업적지표3'] > 0]
-d_p_gen_rank = damage_df[is_jan_gen_dmg].groupby('제휴사명')['업적지표3'].sum().reset_index().sort_values('업적지표3', ascending=False)
-d_p_gen_rank = d_p_gen_rank[d_p_gen_rank['업적지표3'] > 0]
-d_p_car_rank = damage_df[is_jan_car_dmg].groupby('제휴사명')['업적지표3'].sum().reset_index().sort_values('업적지표3', ascending=False)
-d_p_car_rank = d_p_car_rank[d_p_car_rank['업적지표3'] > 0]
+def safe_groupby(df, group_col, val_col):
+    if val_col not in df.columns or df.empty:
+        return pd.DataFrame(columns=[group_col, val_col])
+    r = df.groupby(group_col)[val_col].sum().reset_index().sort_values(val_col, ascending=False)
+    return r[r[val_col] > 0]
+
+val_life_hwansan       = safe_sum(life_df[is_jan_new],       '업적지표1')
+val_life_premium       = safe_sum(life_df[is_jan_new],       '업적지표2')
+val_damage_premium     = safe_sum(damage_df[is_jan_new_dmg], '업적지표3')
+val_damage_gen_premium = safe_sum(damage_df[is_jan_gen_dmg], '업적지표3')
+val_damage_car_premium = safe_sum(damage_df[is_jan_car_dmg], '업적지표3')
+
+l_h_rank     = safe_groupby(life_df[is_jan_new],       '제휴사명', '업적지표1')
+l_p_rank     = safe_groupby(life_df[is_jan_new],       '제휴사명', '업적지표2')
+d_p_rank     = safe_groupby(damage_df[is_jan_new_dmg], '제휴사명', '업적지표3')
+d_p_gen_rank = safe_groupby(damage_df[is_jan_gen_dmg], '제휴사명', '업적지표3')
+d_p_car_rank = safe_groupby(damage_df[is_jan_car_dmg], '제휴사명', '업적지표3')
 
 # 업적 클릭도 target_company/scope에 반영
 if get_sel('sel_ach_life1') is not None:
