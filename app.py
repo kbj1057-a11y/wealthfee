@@ -336,6 +336,142 @@ d_etc_prod = d_etc_prod[d_etc_prod['지사수수료'] > 0]
 
 
 # ==========================================
+# 8-1. 업적 대시보드 클릭 감지 추가 (섹션 8보다 먼저 재계산)
+# ==========================================
+is_jan_new      = life_df['계약일자_정제'].str.startswith('202601', na=False)
+is_dmg_date     = damage_df['계약일자_정제'].str.startswith('202601', na=False)
+is_jan_new_dmg  = is_dmg_date & is_dmg_new
+is_jan_gen_dmg  = is_dmg_date & (damage_df['지급구분'] == '일반')
+is_jan_car_dmg  = is_dmg_date & (damage_df['지급구분'] == '자동차')
+
+val_life_hwansan      = life_df[is_jan_new]['업적지표1'].sum()
+val_life_premium      = life_df[is_jan_new]['업적지표2'].sum()
+val_damage_premium    = damage_df[is_jan_new_dmg]['업적지표3'].sum()
+val_damage_gen_premium= damage_df[is_jan_gen_dmg]['업적지표3'].sum()
+val_damage_car_premium= damage_df[is_jan_car_dmg]['업적지표3'].sum()
+
+l_h_rank = life_df[is_jan_new].groupby('제휴사명')['업적지표1'].sum().reset_index().sort_values('업적지표1', ascending=False)
+l_h_rank = l_h_rank[l_h_rank['업적지표1'] > 0]
+l_p_rank = life_df[is_jan_new].groupby('제휴사명')['업적지표2'].sum().reset_index().sort_values('업적지표2', ascending=False)
+l_p_rank = l_p_rank[l_p_rank['업적지표2'] > 0]
+d_p_rank = damage_df[is_jan_new_dmg].groupby('제휴사명')['업적지표3'].sum().reset_index().sort_values('업적지표3', ascending=False)
+d_p_rank = d_p_rank[d_p_rank['업적지표3'] > 0]
+d_p_gen_rank = damage_df[is_jan_gen_dmg].groupby('제휴사명')['업적지표3'].sum().reset_index().sort_values('업적지표3', ascending=False)
+d_p_gen_rank = d_p_gen_rank[d_p_gen_rank['업적지표3'] > 0]
+d_p_car_rank = damage_df[is_jan_car_dmg].groupby('제휴사명')['업적지표3'].sum().reset_index().sort_values('업적지표3', ascending=False)
+d_p_car_rank = d_p_car_rank[d_p_car_rank['업적지표3'] > 0]
+
+# 업적 클릭도 target_company/scope에 반영
+if get_sel('sel_ach_life1') is not None:
+    target_company = l_h_rank.iloc[get_sel('sel_ach_life1')]['제휴사명']
+    target_scope   = '생명 업적'
+elif get_sel('sel_ach_life2') is not None:
+    target_company = l_p_rank.iloc[get_sel('sel_ach_life2')]['제휴사명']
+    target_scope   = '생명 업적'
+elif get_sel('sel_ach_dmg1') is not None:
+    target_company = d_p_rank.iloc[get_sel('sel_ach_dmg1')]['제휴사명']
+    target_scope   = '손해 업적'
+elif get_sel('sel_ach_dmg2') is not None:
+    target_company = d_p_gen_rank.iloc[get_sel('sel_ach_dmg2')]['제휴사명']
+    target_scope   = '손해 업적 일반'
+elif get_sel('sel_ach_dmg3') is not None:
+    target_company = d_p_car_rank.iloc[get_sel('sel_ach_dmg3')]['제휴사명']
+    target_scope   = '손해 업적 자동차'
+
+# ==========================================
+# 8-2. [상단] 1월 업적 대시보드 (5-Column KPI)
+# ==========================================
+st.markdown("<h3 style='color:#FFFFFF !important; font-weight: 700; padding-left: 5px; border-left: 5px solid #D4AF37;'>🏆 1월 신계약 및 기타 업적 대시보드 (환산/보험료)</h3>", unsafe_allow_html=True)
+col_ach1, col_ach2, col_ach3, col_ach4, col_ach5 = st.columns(5)
+
+with col_ach1:
+    st.markdown(f"""
+    <div class="kpi-card">
+        <p class="kpi-title">생명보험 신계약 환산</p>
+        <h2 class="kpi-value">{val_life_hwansan:,.0f} <span class="unit-won">원</span></h2>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<div class='table-toggle-container'><div class='table-toggle-btn'>제휴사별 상세 보기</div></div>", unsafe_allow_html=True)
+    disp_dataframe(l_h_rank.rename(columns={'업적지표1': '환산금액'}), hide_index=True, use_container_width=True, height=200, selection_mode="single-row", on_select="rerun", key="sel_ach_life1")
+
+with col_ach2:
+    st.markdown(f"""
+    <div class="kpi-card">
+        <p class="kpi-title">생명보험 신계약 보험료</p>
+        <h2 class="kpi-value">{val_life_premium:,.0f} <span class="unit-won">원</span></h2>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<div class='table-toggle-container'><div class='table-toggle-btn'>제휴사별 상세 보기</div></div>", unsafe_allow_html=True)
+    disp_dataframe(l_p_rank.rename(columns={'업적지표2': '보험료'}), hide_index=True, use_container_width=True, height=200, selection_mode="single-row", on_select="rerun", key="sel_ach_life2")
+
+with col_ach3:
+    st.markdown(f"""
+    <div class="kpi-card">
+        <p class="kpi-title">손해보험 신계약 보험료</p>
+        <h2 class="kpi-value">{val_damage_premium:,.0f} <span class="unit-won">원</span></h2>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<div class='table-toggle-container'><div class='table-toggle-btn'>제휴사별 상세 보기</div></div>", unsafe_allow_html=True)
+    disp_dataframe(d_p_rank.rename(columns={'업적지표3': '총보험료'}), hide_index=True, use_container_width=True, height=200, selection_mode="single-row", on_select="rerun", key="sel_ach_dmg1")
+
+with col_ach4:
+    st.markdown(f"""
+    <div class="kpi-card">
+        <p class="kpi-title">손해보험 일반 보험료</p>
+        <h2 class="kpi-value">{val_damage_gen_premium:,.0f} <span class="unit-won">원</span></h2>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<div class='table-toggle-container'><div class='table-toggle-btn'>제휴사별 상세 보기</div></div>", unsafe_allow_html=True)
+    disp_dataframe(d_p_gen_rank.rename(columns={'업적지표3': '총보험료'}), hide_index=True, use_container_width=True, height=200, selection_mode="single-row", on_select="rerun", key="sel_ach_dmg2")
+
+with col_ach5:
+    st.markdown(f"""
+    <div class="kpi-card">
+        <p class="kpi-title">손해보험 자동차 보험료</p>
+        <h2 class="kpi-value">{val_damage_car_premium:,.0f} <span class="unit-won">원</span></h2>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<div class='table-toggle-container'><div class='table-toggle-btn'>제휴사별 상세 보기</div></div>", unsafe_allow_html=True)
+    disp_dataframe(d_p_car_rank.rename(columns={'업적지표3': '총보험료'}), hide_index=True, use_container_width=True, height=200, selection_mode="single-row", on_select="rerun", key="sel_ach_dmg3")
+
+st.markdown("---")
+
+# ==========================================
+# 8-3. [중간] 업적 전용 상세데이터
+# ==========================================
+st.markdown("<h3 style='color:#FFFFFF !important; font-weight: 700; padding-left: 5px; border-left: 5px solid #D4AF37;'>📊 1월 전체 업적 전용 상세데이터</h3>", unsafe_allow_html=True)
+
+if target_scope == '생명 업적':
+    ach_detail_df = life_df[is_jan_new].copy(); ach_scope = "생명 업적"
+elif target_scope == '손해 업적':
+    ach_detail_df = damage_df[is_jan_new_dmg].copy(); ach_scope = "손해 업적"
+elif target_scope == '손해 업적 일반':
+    ach_detail_df = damage_df[is_jan_gen_dmg].copy(); ach_scope = "손해 업적 일반"
+elif target_scope == '손해 업적 자동차':
+    ach_detail_df = damage_df[is_jan_car_dmg].copy(); ach_scope = "손해 업적 자동차"
+else:
+    ach_detail_df = pd.concat([life_df[is_jan_new], damage_df[is_jan_new_dmg], damage_df[is_jan_gen_dmg], damage_df[is_jan_car_dmg]])
+    ach_scope = "1월 업적 통합"
+
+if target_scope in ['생명 업적', '손해 업적', '손해 업적 일반', '손해 업적 자동차'] and target_company:
+    st.markdown(f"<h4 style='color:#D4AF37 !important; font-weight: 700;'>🔎 조회중: [{target_company}] ({ach_scope}) 상세 데이터</h4>", unsafe_allow_html=True)
+    ach_detail_df = ach_detail_df[ach_detail_df['제휴사명'] == target_company]
+else:
+    st.markdown("<h4 style='color:#FFFFFF !important; font-weight: 700;'>📄 1월 업적 데이터(신계약/기타) 전체 상세</h4>", unsafe_allow_html=True)
+    st.caption("💡 위 업적 표에서 회사를 클릭하면 이 자리에 해당 회사의 상세 내역이 연동됩니다.")
+
+display_cols_ach = ['계약일자_정제', '제휴사명', 'FC명', '지급구분', '상품군', '상품명', '계약자', '업적지표2', '업적지표3', '업적지표1']
+ach_display_df = ach_detail_df[[c for c in display_cols_ach if c in ach_detail_df.columns]].copy()
+ach_display_df.rename(columns={'계약일자_정제': '계약일자', '업적지표1': '환산', '업적지표2': '생명_보험료', '업적지표3': '손해_보험료'}, inplace=True)
+if ach_scope == '생명 업적' and '손해_보험료' in ach_display_df.columns:
+    ach_display_df = ach_display_df.drop(columns=['손해_보험료'])
+elif '손해' in ach_scope:
+    if '생명_보험료' in ach_display_df.columns: ach_display_df = ach_display_df.drop(columns=['생명_보험료'])
+    if '환산' in ach_display_df.columns: ach_display_df = ach_display_df.drop(columns=['환산'])
+disp_dataframe(ach_display_df, use_container_width=True, height=300)
+st.markdown("---")
+
+# ==========================================
 # 9. 전체 수수료 대시보드 (더블 컨테이너)
 # ==========================================
 st.markdown("<h3 style='color:#FFFFFF !important; font-weight: 700; padding-left: 5px; border-left: 5px solid #D4AF37;'>💰 전체 수수료 대시보드 (지사수수료 기준)</h3>", unsafe_allow_html=True)
