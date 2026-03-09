@@ -317,7 +317,7 @@ html_content = f"""<!DOCTYPE html>
 <body>
 
 <div id="passwordGate">
-    <h1 style="font-size:3.5rem; margin-bottom: 15px;">VVIP SECURITY</h1>
+    <h1 style="font-size:3.5rem; margin-bottom: 15px;">웰스FA SECURITY</h1>
     <p style="color:#A0AEC0; margin-bottom:40px; font-size:1.2rem;">마스터피스 대시보드 접근 권한 확인이 필요합니다.</p>
     <input type="password" id="passInput" class="pass-input" placeholder="ACCESS CODE">
     <button class="pass-btn" onclick="checkPass()">인증 및 입장</button>
@@ -452,7 +452,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
     
     <div style="text-align:center; color:#334155; font-size:0.9rem; margin:100px 0 50px 0; padding:40px; border-top:1px solid rgba(255,255,255,0.03);">
-        웰스FA VVIP 마스터피스 대시보드 · <span style="color:var(--color-gold);">Supreme Edition</span> · Powered by Antigravity
+        웰스FA 마스터피스 대시보드 · <span style="color:var(--color-gold);">Supreme Edition</span> · Powered by Antigravity
     </div>
 </div>
 
