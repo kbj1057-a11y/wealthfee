@@ -1,0 +1,57 @@
+Starting Process...
+SEARCH_ROOT: g:\내 드라이브\안티그래비티\급여,수수료PROJECT\27일수수료자료
+Found 15 target files.
+Processing File: (1ъ뾽遺)섏엯섏닔猷뚯궛異쇱꽦앸챸_202604.xlsx
+  Sheets: ['삼성생명_202604']
+    Sheet: 삼성생명_202604, Shape: (5172, 37)
+Processing File: (2ъ뾽遺)섏엯섏닔猷뚯궛異誘몃옒먯뀑앸챸_202604.xlsx
+  Sheets: ['미래에셋생명_202604']
+    Sheet: 미래에셋생명_202604, Shape: (57, 46)
+Processing File: (3ъ뾽遺)섏엯섏닔猷뚯궛異랁삊앸챸_202604.xlsx
+  Sheets: ['농협생명_202604']
+    Sheet: 농협생명_202604, Shape: (35, 35)
+Processing File: (4ъ뾽遺)섏엯섏닔猷뚯궛異꾨댁긽_202604.xlsx
+  Sheets: ['현대해상_202604']
+    Sheet: 현대해상_202604, Shape: (788, 33)
+Processing File: (5ъ뾽遺)섏엯섏닔猷뚯궛異쇱꽦붿옱_202604.xlsx
+  Sheets: ['삼성화재_202604']
+    Sheet: 삼성화재_202604, Shape: (2033, 37)
+Processing File: (6ъ뾽遺)섏엯섏닔猷뚯궛異硫붾━痢좏솕202604.xlsx
+  Sheets: ['메리츠화재_202604']
+    Sheet: 메리츠화재_202604, Shape: (3613, 41)
+Processing File: (7ъ뾽遺)섏엯섏닔猷뚯궛異DB먰빐蹂댄뿕_202604.xlsx
+  Sheets: ['DB손해보험_202604']
+    Sheet: DB손해보험_202604, Shape: (1469, 40)
+Processing File: (8ъ뾽遺)섏엯섏닔猷뚯궛異κ뎅붿옱_202604.xlsx
+  Sheets: ['흥국화재_202604']
+    Sheet: 흥국화재_202604, Shape: (65, 39)
+Processing File: (9ъ뾽遺)섏엯섏닔猷뚯궛異KB먰빐蹂댄뿕_202604.xlsx
+  Sheets: ['KB손해보험_202604']
+    Sheet: KB손해보험_202604, Shape: (1651, 42)
+Processing File: (1ъ뾽遺)섏엯섏닔猷뚯궛異濡뜲먰빐蹂댄뿕_202604.xlsx
+  Sheets: ['롯데손해보험_202604']
+    Sheet: 롯데손해보험_202604, Shape: (1, 35)
+Processing File: (1ъ뾽遺)섏엯섏닔猷뚯궛異쒗솕먰빐蹂댄뿕_202604.xlsx
+  Sheets: ['한화손해보험_202604']
+    Sheet: 한화손해보험_202604, Shape: (215, 39)
+Processing File: (1ъ뾽遺)섏엯섏닔猷뚯궛異랁삊먰빐蹂댄뿕_202604.xlsx
+  Sheets: ['농협손해보험_202604']
+    Sheet: 농협손해보험_202604, Shape: (1, 36)
+Processing File: (1ъ뾽遺)섏엯섏닔猷뚯궛異섎굹먰빐_202604.xlsx
+  Sheets: ['하나손해_202604']
+    Sheet: 하나손해_202604, Shape: (5, 35)
+Processing File: (1ъ뾽遺)섏엯섏닔猷뚯궛異AIG먰빐蹂댄뿕_202604.xlsx
+  Sheets: ['AIG손해보험_202604']
+    Sheet: AIG손해보험_202604, Shape: (1, 34)
+Processing File: 2604이파트너수수료업데이트.xlsx
+  Sheets: ['생명보험', '장기', '자동차', '일반', '관리수수료', '지사전략수수료', '세전기타지급', '세후기타공제']
+    Sheet: 생명보험, Shape: (67, 19)
+    Sheet: 장기, Shape: (3, 19)
+    Sheet: 자동차, Shape: (1, 14)
+    Sheet: 일반, Shape: (1, 14)
+    Sheet: 관리수수료, Shape: (15108, 21)
+    Sheet: 지사전략수수료, Shape: (1, 4)
+    Sheet: 세전기타지급, Shape: (9, 4)
+    Sheet: 세후기타공제, Shape: (7, 4)
+Total Life Data Collected: 19
+Successfully saved output file.
