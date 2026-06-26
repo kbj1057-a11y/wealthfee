@@ -10,8 +10,8 @@ STANDARD_24_COLS = [
     '\uc0ac\ubc88', 'FC\uba85', '\uc9c0\uae09\uad6c\ubd84', '\uae30\ucd08\uc0c1\ud0dc', 
     '\ud45c\uc900\uc0c1\ud0dc', '\uc0c1\ud488\uad70', '\uc0c1\ud488\ucf54\ub4dc', 
     '\uc0c1\ud488\uba85', '\uacc4\uc57d\uc77c\uc790', '\ud0dc\uc544\uad6c\ubd84', 
-    '\uacc4\uc57d\uc790', '\ub0a9\uc785\ubc29\ubc95', '\ubcf4\ud5d8\ub8cc', 
-    '\ub0a9\uc785\uae30\uac04', '\ub0a9\uc785\ud68c\ucc28'
+    '\uacc4\uc57d\uc790', '\ub0a9\uc785\ubc29\ubc95', '\ub0a9\uc785\uae30\uac04', 
+    '\ub0a9\uc785\ud68c\ucc28', '\ubcf4\ud5d8\ub8cc'
 ]
 
 def process_files():
@@ -58,29 +58,23 @@ def process_files():
                             max_idx = target_df.shape[1] - 1
                             comm = target_df.iloc[i, max_idx]
                             
-                            if is_life:
-                                perf = target_df.iloc[i, 24] if max_idx >= 24 else 0
-                                p21 = target_df.iloc[i, 21] if max_idx >= 21 else 0
-                            else:
-                                perf = 0
-                                p21 = target_df.iloc[i, 21] if max_idx >= 21 else (target_df.iloc[i, 7] if max_idx >= 7 else 0)
-                            
-                            p23 = target_df.iloc[i, 23] if max_idx >= 23 else 0
-                            
                             def to_f(v):
-                                try: return float(str(v).replace(',', '')) if not pd.isna(v) else 0
+                                try: return float(str(v).replace(',', '').strip()) if not pd.isna(v) else 0
                                 except: return 0
                             
-                            f_p21, f_p23, f_perf, f_comm = to_f(p21), to_f(p23), to_f(perf), to_f(comm)
-
-                            subset['val_hwansan'] = f_perf if is_life else 0
-                            if not is_life:
-                                if f_p21 == 0 and f_p23 > 1000:
-                                    subset['val_premium'] = f_p23
-                                else:
-                                    subset['val_premium'] = f_p21
+                            f_comm = to_f(comm)
+                            
+                            if is_life:
+                                perf = target_df.iloc[i, 24] if max_idx >= 24 else 0
+                                f_perf = to_f(perf)
+                                subset['val_hwansan'] = f_perf
+                                subset['val_premium'] = 0
                             else:
-                                subset['val_premium'] = f_p21
+                                premium_24 = target_df.iloc[i, 24] if max_idx >= 24 else 0
+                                f_premium = to_f(premium_24)
+                                # 24번째 열 수정보험료가 없거나 0이면 원본 23번째 열의 보험료(subset['보험료'])를 폴백으로 사용
+                                subset['val_premium'] = f_premium if f_premium != 0 else to_f(subset['\ubcf4\ud5d8\ub8cc'])
+                                subset['val_hwansan'] = 0
                                 
                             subset['val_fee'] = f_comm
                             

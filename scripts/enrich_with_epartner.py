@@ -94,6 +94,30 @@ def enrich_data():
             existing_rename = {k: v for k, v in rename_map.items() if k in enriched_df.columns}
             enriched_df.rename(columns=existing_rename, inplace=True)
             
+            # 5월(2605) 마스터 규격과 100% 일치하도록 시트별로 컬럼을 필터링하고 순서를 정렬
+            STANDARD_24_COLS = [
+                'NO', '\uc815\uc0b0\ub144\uc6d4', '\uc81c\ud734\uc0ac\uba85', '\uc99d\uad8c\ubc88\ud638', 
+                '\ubcf8\uc0ac', '\uc0ac\uc5c5\ub2e8', '\uc9c0\uc0ac', '\uc9c0\uc810', '\ud300', 
+                '\uc0ac\ubc88', 'FC\uba85', '\uc9c0\uae09\uad6c\ubd84', '\uae30\ucd08\uc0c1\ud0dc', 
+                '\ud45c\uc900\uc0c1\ud0dc', '\uc0c1\ud488\uad70', '\uc0c1\ud488\ucf54\ub4dc', 
+                '\uc0c1\ud488\uba85', '\uacc4\uc57d\uc77c\uc790', '\ud0dc\uc544\uad6c\ubd84', 
+                '\uacc4\uc57d\uc790', '\ub0a9\uc785\ubc29\ubc95', '\ub0a9\uc785\uae30\uac04', 
+                '\ub0a9\uc785\ud68c\ucc28', '\ubcf4\ud5d8\ub8cc'
+            ]
+            
+            if sheet_name == 'Life':
+                final_cols = STANDARD_24_COLS + ['\ud658\uc0b0', '\ucd5c\uc885\uc218\uc218\ub8cc', 'FC\uc218\uc218\ub8cc', '\uc9c0\uc0ac\uc218\uc218\ub8cc', '\ubd84\ub2f4\uae08']
+            else:
+                final_cols = STANDARD_24_COLS + ['\uc218\uc815\ubcf4\ud5d8\ub8cc', '\ucd5c\uc885\uc218\uc218\ub8cc', 'FC\uc218\uc218\ub8cc', '\uc9c0\uc0ac\uc218\uc218\ub8cc', '\ubd84\ub2f4\uae08']
+                
+            # 누락된 컬럼이 있을 경우 None으로 생성
+            for col in final_cols:
+                if col not in enriched_df.columns:
+                    enriched_df[col] = None
+                    
+            # 컬럼 순서 재배치 및 필터
+            enriched_df = enriched_df[final_cols]
+            
             enriched_df.to_excel(writer, sheet_name=sheet_name, index=False)
             
     print(f"Successfully enriched: {OUTPUT_PATH}")
