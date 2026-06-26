@@ -739,8 +739,8 @@
             alert("데이터를 불러오지 못했습니다. 잠시 후 다시 시도하거나 서버 상태를 확인해 주세요.");
             return;
         }
-        currentData = rawData.fee_data["2026_05"] || [];
-        console.log("Dashboard initialized with 2026_05 Fee data. Count:", currentData.length);
+        currentData = rawData.fee_data["2026_06"] || [];
+        console.log("Dashboard initialized with 2026_06 Fee data. Count:", currentData.length);
     }
 
     function changePeriod(y, m, t, btn) {
@@ -959,16 +959,16 @@
         renderTop10('top10_dmg_gen', '⚪ 손해 기타', '#94A3B8', conds['fee_dmg_gen'], 'fee_dmg_gen');
     }
 
-    // 초기 실행 시 2026년 3월 시책 자동 선택
+    // 초기 실행 시 2026년 6월 수수료 자동 선택
     window.addEventListener('load', () => {
         const year2026Btn = document.querySelector('.year-btn:last-child');
         if (year2026Btn) {
             selectYear(2026, year2026Btn);
-            // 버튼이 생성될 때까지 넉넉히 대기 후 5월 수수료 버튼 클릭
+            // 버튼이 생성될 때까지 넉넉히 대기 후 6월 수수료 버튼 클릭
             setTimeout(() => {
-                const targetBtn = Array.from(document.querySelectorAll('.month-btn')).find(b => b.innerText.includes('5월'));
+                const targetBtn = Array.from(document.querySelectorAll('.month-btn')).find(b => b.innerText.includes('6월'));
                 if(targetBtn) {
-                    changePeriod(2026, 5, '수수료', targetBtn);
+                    changePeriod(2026, 6, '수수료', targetBtn);
                 }
             }, 500);
         }

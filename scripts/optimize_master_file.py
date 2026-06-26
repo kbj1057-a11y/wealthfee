@@ -5,8 +5,8 @@ import argparse
 # 기본 경로 설정
 BASE_ROOT = r'g:\내 드라이브\안티그래비티\급여,수수료PROJECT'
 
-# 영문 키 사용 (부식 방지 및 안정성)
-COL_FINAL_FEE = 'val_fee'
+# 영문 키 사용 (부식 방지 및 안정성) -> verified.xlsx가 한글화되었으므로 이에 맞게 수정
+COL_FINAL_FEE = '\ucd5c\uc885\uc218\uc218\ub8cc' # 최종수수료
 COL_FEE_FC = 'FC\uc218\uc218\ub8cc'
 COL_FEE_BRANCH = '\uc9c0\uc0ac\uc218\uc218\ub8cc' 
 COL_FEE_SHARE = '\ubd84\ub2f4\uae08'

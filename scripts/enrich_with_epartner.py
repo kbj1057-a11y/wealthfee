@@ -85,6 +85,15 @@ def enrich_data():
             for col in [COL_FEE_FC, COL_FEE_BRANCH, COL_FEE_SHARE]:
                 enriched_df[col] = pd.to_numeric(enriched_df[col], errors='coerce').fillna(0)
             
+            # 영문 컬럼명을 국문 표준 규격으로 변환
+            rename_map = {
+                'val_hwansan': '\ud658\uc0b0',       # 환산
+                'val_premium': '\uc218\uc815\ubcf4\ud5d8\ub8cc', # 수정보험료
+                'val_fee': '\ucd5c\uc885\uc218\uc218\ub8cc'     # 최종수수료
+            }
+            existing_rename = {k: v for k, v in rename_map.items() if k in enriched_df.columns}
+            enriched_df.rename(columns=existing_rename, inplace=True)
+            
             enriched_df.to_excel(writer, sheet_name=sheet_name, index=False)
             
     print(f"Successfully enriched: {OUTPUT_PATH}")
