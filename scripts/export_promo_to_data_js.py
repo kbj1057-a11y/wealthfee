@@ -36,20 +36,19 @@ def export_promo_to_js():
     ym_num = int(f"20{yymm}") # 예: 202606
     pay_date = f"20{yymm[:2]}{yymm[2:]}05" # 예: "20260605"
 
-    # 매핑할 항목 정의
-    # (엑셀컬럼, 시책종류_양수, 시책종류_음수, 상품명_접미사)
+    # 매핑할 항목 정의: (엑셀컬럼, 시책종류_양수, 시책종류_음수, 상품명_접미사, 카테고리_양수, 카테고리_음수)
     items_to_map = [
-        ('초회', 'FC_초회', 'FC_초회환수', '초회'),
-        ('2차년', 'FC_2차년', 'FC_2차년환수', '2차년'),
-        ('기타', 'FC_기타', 'FC_기타환수', '기타'),
-        ('지사전략', 'FC_전략선지급', 'FC_전략선지급환수', '지사전략'),
-        ('환수', 'FC_2차년환수', 'FC_2차년환수', '환수')
+        ('초회', 'FC_초회', 'FC_초회환수', '초회', 'initial_cash', 'initial_refund'),
+        ('2차년', 'FC_2차년', 'FC_2차년환수', '2차년', 'year2_cash', 'year2_refund'),
+        ('기타', 'FC_기타', 'FC_기타환수', '기타', 'etc', 'etc'),
+        ('지사전략', 'FC_전략선지급', 'FC_전략선지급환수', '지사전략', 'initial_cash', 'initial_refund'),
+        ('환수', 'FC_2차년환수', 'FC_2차년환수', '환수', 'year2_refund', 'year2_refund')
     ]
 
     for idx, row in df.iterrows():
         fc_name = str(row['FC명']).strip()
         
-        for col_name, kind_pos, kind_neg, name_suffix in items_to_map:
+        for col_name, kind_pos, kind_neg, name_suffix, cat_pos, cat_neg in items_to_map:
             if col_name not in df.columns:
                 continue
                 
@@ -66,13 +65,15 @@ def export_promo_to_js():
             if val == 0:
                 continue
 
-            # 시책종류와 상품명 정의
+            # 시책종류, 상품명, 카테고리 정의
             if val > 0:
                 kind = kind_pos
                 prod_name = f"{int(month_suffix)}월 지급시책 {name_suffix}"
+                category = cat_pos
             else:
                 kind = kind_neg
                 prod_name = f"{int(month_suffix)}월 지급시책 {name_suffix} 환수"
+                category = cat_neg
 
             record = {
                 "정산년월": ym_num,
@@ -86,7 +87,7 @@ def export_promo_to_js():
                 "보험료": 0,
                 "시책금": val,
                 "시책상세내용": f"{yymm[:2]}년 {month_suffix}월 지급시책 {name_suffix}",
-                "카테고리": "none"
+                "카테고리": category
             }
             promo_records.append(record)
 
